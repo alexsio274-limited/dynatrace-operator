@@ -119,7 +119,7 @@ type CapabilityProperties struct {
 	// +operator-sdk:gen-csv:customresourcedefinitions.specDescriptors.x-descriptors="urn:alm:descriptor:com.tectonic.ui:advanced,urn:alm:descriptor:com.tectonic.ui:text"
 	Env []corev1.EnvVar `json:"env,omitempty"`
 
-	StatsDCapabilityProperties `json:",inline"`
+	StatsDCapabilityProperties `json:"-"` // TODO Enable with `json:",inline"` once EEC/StatsD images are pullable from the cluster
 }
 
 type StatsDCapabilityProperties struct {

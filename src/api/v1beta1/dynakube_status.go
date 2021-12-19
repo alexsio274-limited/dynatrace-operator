@@ -53,8 +53,8 @@ type DynaKubeStatus struct {
 	Conditions []metav1.Condition `json:"conditions,omitempty"`
 
 	ActiveGate          ActiveGateStatus `json:"activeGate,omitempty"`
-	ExtensionController EECStatus        `json:"eec,omitempty"`
-	StatsD              StatsDStatus     `json:"statsd,omitempty"`
+	ExtensionController EECStatus        `json:"-"` // TODO Enable with `json:"eec,omitempty"` once EEC/StatsD images are pullable from the cluster
+	StatsD              StatsDStatus     `json:"-"` // TODO Enable with `json:"statsd,omitempty"` once EEC/StatsD images are pullable from the cluster
 
 	OneAgent OneAgentStatus `json:"oneAgent,omitempty"`
 }
