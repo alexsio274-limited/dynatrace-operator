@@ -11,6 +11,7 @@ import (
 
 const statsDProbesPortName = "statsd-probes"
 const statsDProbesPort = 14999
+const statsDLogsDir = extensionsLogsDir + "/datasources-statsd"
 
 const (
 	dataSourceMetadata = "ds-metadata"
@@ -74,6 +75,12 @@ func (statsd *StatsD) BuildVolumes() []corev1.Volume {
 				EmptyDir: &corev1.EmptyDirVolumeSource{},
 			},
 		},
+		{
+			Name: "statsd-logs",
+			VolumeSource: corev1.VolumeSource{
+				EmptyDir: &corev1.EmptyDirVolumeSource{},
+			},
+		},
 	}
 }
 
@@ -105,6 +112,7 @@ func (statsd *StatsD) buildVolumeMounts() []corev1.VolumeMount {
 		{Name: dataSourceStartupArguments, MountPath: "/mnt/dsexecargs"},
 		{Name: dataSourceAuthToken, MountPath: "/var/lib/dynatrace/remotepluginmodule/agent/runtime/datasources"},
 		{Name: dataSourceMetadata, MountPath: "/mnt/dsmetadata"},
+		{Name: "statsd-logs", MountPath: statsDLogsDir},
 	}
 }
 
@@ -113,5 +121,6 @@ func (statsd *StatsD) buildEnvs() []corev1.EnvVar {
 		{Name: "StatsDExecArgsPath", Value: "/mnt/dsexecargs/statsd.process.json"},
 		{Name: "ProbeServerPort", Value: fmt.Sprintf("%d", statsDProbesPort)},
 		{Name: "StatsDMetadataDir", Value: "/mnt/dsmetadata"},
+		{Name: "DsLogFile", Value: statsDLogsDir + "/dynatracesourcestatsd.log"},
 	}
 }

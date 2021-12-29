@@ -38,12 +38,13 @@ func TestStatsD_BuildContainerAndVolumes(t *testing.T) {
 			"/mnt/dsexecargs",
 			"/var/lib/dynatrace/remotepluginmodule/agent/runtime/datasources",
 			"/mnt/dsmetadata",
+			statsDLogsDir,
 		} {
 			assertion.Truef(kubeobjects.MountPathIsIn(container.VolumeMounts, mountPath), "Expected that StatsD container defines mount point %s", mountPath)
 		}
 
 		for _, envVar := range []string{
-			"StatsDExecArgsPath", "ProbeServerPort", "StatsDMetadataDir",
+			"StatsDExecArgsPath", "ProbeServerPort", "StatsDMetadataDir", "DsLogFile",
 		} {
 			assertion.Truef(kubeobjects.EnvVarIsIn(container.Env, envVar), "Expected that StatsD container defined environment variable %s", envVar)
 		}
