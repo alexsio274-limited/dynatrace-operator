@@ -3,7 +3,7 @@ package statefulset
 import (
 	"fmt"
 
-	"github.com/Dynatrace/dynatrace-operator/src/controllers/activegate/internal/consts"
+	statsdingest "github.com/Dynatrace/dynatrace-operator/src/controllers/activegate/capability/statsd-ingest"
 	"github.com/Dynatrace/dynatrace-operator/src/kubeobjects"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -11,7 +11,7 @@ import (
 
 const statsdProbesPortName = "statsd-probes"
 const statsdProbesPort = 14999
-const statsDLogsDir = extensionsLogsDir + "/datasources-statsd"
+const statsdLogsDir = extensionsLogsDir + "/datasources-statsd"
 
 const (
 	dataSourceMetadata   = "ds-metadata"
@@ -32,7 +32,7 @@ func NewStatsd(stsProperties *statefulSetProperties) *Statsd {
 
 func (statsd *Statsd) BuildContainer() corev1.Container {
 	return corev1.Container{
-		Name:            consts.StatsdContainerName,
+		Name:            statsdingest.StatsdContainerName,
 		Image:           statsd.image(),
 		ImagePullPolicy: corev1.PullAlways,
 		Env:             statsd.buildEnvs(),
@@ -103,7 +103,7 @@ func (statsd *Statsd) buildCommand() []string {
 
 func (statsd *Statsd) buildPorts() []corev1.ContainerPort {
 	return []corev1.ContainerPort{
-		{Name: consts.StatsdIngestTargetPort, ContainerPort: consts.StatsdIngestPort},
+		{Name: statsdingest.StatsdIngestTargetPort, ContainerPort: statsdingest.StatsdIngestPort},
 		{Name: statsdProbesPortName, ContainerPort: statsdProbesPort},
 	}
 }
@@ -113,7 +113,7 @@ func (statsd *Statsd) buildVolumeMounts() []corev1.VolumeMount {
 		{Name: dataSourceStartupArguments, MountPath: dataSourceStartupArgsMountPoint},
 		{Name: dataSourceAuthToken, MountPath: dataSourceAuthTokenMountPoint},
 		{Name: dataSourceMetadata, MountPath: dataSourceMetadataMountPoint},
-		{Name: dataSourceStatsdLogs, MountPath: statsDLogsDir},
+		{Name: dataSourceStatsdLogs, MountPath: statsdLogsDir},
 	}
 }
 
@@ -122,6 +122,6 @@ func (statsd *Statsd) buildEnvs() []corev1.EnvVar {
 		{Name: "StatsdExecArgsPath", Value: dataSourceStartupArgsMountPoint + "/statsd.process.json"},
 		{Name: "ProbeServerPort", Value: fmt.Sprintf("%d", statsdProbesPort)},
 		{Name: "StatsdMetadataDir", Value: dataSourceMetadataMountPoint},
-		{Name: "DsLogFile", Value: statsDLogsDir + "/dynatracesourcestatsd.log"},
+		{Name: "DsLogFile", Value: statsdLogsDir + "/dynatracesourcestatsd.log"},
 	}
 }

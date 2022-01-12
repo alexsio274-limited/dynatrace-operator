@@ -36,7 +36,7 @@ func TestExtensionController_BuildContainerAndVolumes(t *testing.T) {
 			dataSourceAuthTokenMountPoint,
 			statsdMetadataMountPoint,
 			extensionsLogsDir,
-			statsDLogsDir,
+			statsdLogsDir,
 		} {
 			assertion.Truef(kubeobjects.MountPathIsIn(container.VolumeMounts, mountPath), "Expected that EEC container defines mount point %s", mountPath)
 		}
