@@ -3,7 +3,7 @@ package statefulset
 import (
 	"fmt"
 
-	"github.com/Dynatrace/dynatrace-operator/src/controllers/activegate/internal/consts"
+	statsdingest "github.com/Dynatrace/dynatrace-operator/src/controllers/activegate/capability/statsd-ingest"
 	"github.com/Dynatrace/dynatrace-operator/src/kubeobjects"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/util/intstr"
@@ -31,7 +31,7 @@ func NewStatsD(stsProperties *statefulSetProperties) *StatsD {
 
 func (statsd *StatsD) BuildContainer() corev1.Container {
 	return corev1.Container{
-		Name:            consts.StatsDContainerName,
+		Name:            statsdingest.StatsDContainerName,
 		Image:           statsd.image(),
 		ImagePullPolicy: corev1.PullAlways,
 		Env:             statsd.buildEnvs(),
@@ -102,7 +102,7 @@ func (statsd *StatsD) buildCommand() []string {
 
 func (statsd *StatsD) buildPorts() []corev1.ContainerPort {
 	return []corev1.ContainerPort{
-		{Name: consts.StatsDIngestTargetPort, ContainerPort: consts.StatsDIngestPort},
+		{Name: statsdingest.StatsDIngestTargetPort, ContainerPort: statsdingest.StatsDIngestPort},
 		{Name: statsDProbesPortName, ContainerPort: statsDProbesPort},
 	}
 }

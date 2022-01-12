@@ -7,6 +7,7 @@ import (
 
 	dynatracev1beta1 "github.com/Dynatrace/dynatrace-operator/src/api/v1beta1"
 	"github.com/Dynatrace/dynatrace-operator/src/controllers/activegate/capability"
+	statsdingest "github.com/Dynatrace/dynatrace-operator/src/controllers/activegate/capability/statsd-ingest"
 	"github.com/Dynatrace/dynatrace-operator/src/controllers/activegate/internal/consts"
 	"github.com/Dynatrace/dynatrace-operator/src/controllers/activegate/internal/events"
 	sts "github.com/Dynatrace/dynatrace-operator/src/controllers/activegate/reconciler/statefulset"
@@ -99,17 +100,17 @@ func setCommunicationsPort(dk *dynatracev1beta1.DynaKube) events.StatefulSetEven
 			}
 		}
 		if dk.NeedsStatsD() {
-			statsdContainer, err := getContainerByName(sts.Spec.Template.Spec.Containers, consts.StatsDContainerName)
+			statsdContainer, err := getContainerByName(sts.Spec.Template.Spec.Containers, statsdingest.StatsDContainerName)
 			if err == nil {
 				statsdContainer.Ports = []corev1.ContainerPort{
 					{
-						Name:          consts.StatsDIngestTargetPort,
-						ContainerPort: consts.StatsDIngestPort,
+						Name:          statsdingest.StatsDIngestTargetPort,
+						ContainerPort: statsdingest.StatsDIngestPort,
 						Protocol:      corev1.ProtocolUDP,
 					},
 				}
 			} else {
-				log.Info("Cannot find container in the StatefulSet", "container name", consts.StatsDContainerName)
+				log.Info("Cannot find container in the StatefulSet", "container name", statsdingest.StatsDContainerName)
 			}
 		}
 	}
