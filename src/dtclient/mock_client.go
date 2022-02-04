@@ -16,8 +16,8 @@ func (o *MockDynatraceClient) GetAgentTenantInfo() (*AgentTenantInfo, error) {
 	return args.Get(0).(*AgentTenantInfo), args.Error(1)
 }
 
-func (o *MockDynatraceClient) GetActiveGateTenantInfo(retryNoNetworkzone bool) (*ActiveGateTenantInfo, error) {
-	args := o.Called(retryNoNetworkzone)
+func (o *MockDynatraceClient) GetActiveGateTenantInfo() (*ActiveGateTenantInfo, error) {
+	args := o.Called()
 	return args.Get(0).(*ActiveGateTenantInfo), args.Error(1)
 }
 

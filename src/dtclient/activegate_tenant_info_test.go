@@ -1,8 +1,9 @@
 package dtclient
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 const activeGateConnectionInfoEndpoint = "/v1/deployment/installer/gateway/connectioninfo"
@@ -14,7 +15,7 @@ func TestGetActiveGateTenantInfoFaulty1(t *testing.T) {
 		dynatraceServer, dynatraceClient := createTestDynatraceClient(t, tenantServerHandler(activeGateConnectionInfoEndpoint, agTenantResponse), "")
 		defer dynatraceServer.Close()
 
-		tenantInfo, err := dynatraceClient.GetActiveGateTenantInfo(false)
+		tenantInfo, err := dynatraceClient.GetActiveGateTenantInfo()
 		assert.NoError(t, err)
 		assert.NotNil(t, tenantInfo)
 
@@ -24,17 +25,17 @@ func TestGetActiveGateTenantInfoFaulty1(t *testing.T) {
 		dynatraceServer, dynatraceClient := createTestDynatraceClient(t, tenantServerHandler(activeGateConnectionInfoEndpoint, agTenantResponse), "nz")
 		defer dynatraceServer.Close()
 
-		tenantInfo, err := dynatraceClient.GetActiveGateTenantInfo(false)
+		tenantInfo, err := dynatraceClient.GetActiveGateTenantInfo()
 		assert.NoError(t, err)
 		assert.NotNil(t, tenantInfo)
 
 		assert.Equal(t, agTenantResponse, tenantInfo)
 	})
 	t.Run("GetActiveGateTenantInfo with nonexisting networkzone", func(t *testing.T) {
-		dynatraceServer, dynatraceClient := createTestDynatraceClient(t, tenantServerHandler(activeGateConnectionInfoEndpoint, agTenantResponse), "nz")
+		dynatraceServer, dynatraceClient := createTestDynatraceClient(t, tenantServerHandler(activeGateConnectionInfoEndpoint, agTenantResponse), "")
 		defer dynatraceServer.Close()
 
-		tenantInfo, err := dynatraceClient.GetActiveGateTenantInfo(false)
+		tenantInfo, err := dynatraceClient.GetActiveGateTenantInfo()
 		assert.NoError(t, err)
 		assert.NotNil(t, tenantInfo)
 
@@ -44,7 +45,7 @@ func TestGetActiveGateTenantInfoFaulty1(t *testing.T) {
 		faultyDynatraceServer, faultyDynatraceClient := createTestDynatraceClient(t, tenantMalformedJson(activeGateConnectionInfoEndpoint), "")
 		defer faultyDynatraceServer.Close()
 
-		tenantInfo, err := faultyDynatraceClient.GetActiveGateTenantInfo(false)
+		tenantInfo, err := faultyDynatraceClient.GetActiveGateTenantInfo()
 		assert.Error(t, err)
 		assert.Nil(t, tenantInfo)
 
@@ -54,7 +55,7 @@ func TestGetActiveGateTenantInfoFaulty1(t *testing.T) {
 		faultyDynatraceServer, faultyDynatraceClient := createTestDynatraceClient(t, tenantInternalServerError(activeGateConnectionInfoEndpoint), "")
 		defer faultyDynatraceServer.Close()
 
-		tenantInfo, err := faultyDynatraceClient.GetActiveGateTenantInfo(false)
+		tenantInfo, err := faultyDynatraceClient.GetActiveGateTenantInfo()
 		assert.Error(t, err)
 		assert.Nil(t, tenantInfo)
 

@@ -9,7 +9,7 @@ const (
 )
 
 func (r *Reconciler) GenerateData() (map[string][]byte, error) {
-	tenantInfo, err := r.dtc.GetActiveGateTenantInfo(true)
+	tenantInfo, err := r.dtc.GetActiveGateTenantInfo()
 
 	if err != nil {
 		return nil, errors.WithStack(err)

@@ -24,8 +24,7 @@ type dynatraceClient struct {
 	apiToken  string
 	paasToken string
 
-	networkZone    string
-	useNetworkZone bool
+	networkZone string
 
 	disableHostsRequests bool
 
@@ -70,12 +69,6 @@ func (dtc *dynatraceClient) makeRequest(url string, tokenType tokenType) (*http.
 	}
 
 	req.Header.Add("Authorization", authHeader)
-
-	if dtc.useNetworkZone && dtc.networkZone != "" {
-		query := req.URL.Query()
-		query.Set("networkZone", dtc.networkZone)
-		req.URL.RawQuery = query.Encode()
-	}
 
 	return dtc.httpClient.Do(req)
 }
