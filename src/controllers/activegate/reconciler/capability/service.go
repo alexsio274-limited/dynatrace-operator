@@ -14,12 +14,9 @@ import (
 )
 
 func createService(instance *dynatracev1beta1.DynaKube, feature string) *corev1.Service {
-	needsStatsD := instance.NeedsStatsd()
-	needsMetricsIngest := instance.NeedsMetricsIngest()
-
 	var ports []corev1.ServicePort
 
-	if needsMetricsIngest {
+	if instance.NeedsMetricsIngest() {
 		ports = append(ports,
 			corev1.ServicePort{
 				Name:       consts.HttpsServicePortName,
@@ -36,7 +33,7 @@ func createService(instance *dynatracev1beta1.DynaKube, feature string) *corev1.
 		)
 	}
 
-	if needsStatsD {
+	if instance.NeedsStatsd() {
 		ports = append(ports,
 			corev1.ServicePort{
 				Name:       statsdingest.StatsdIngestPortName,
@@ -46,6 +43,11 @@ func createService(instance *dynatracev1beta1.DynaKube, feature string) *corev1.
 			},
 		)
 	}
+
+	// TODO Return nil instead of empty Service if it's not needed
+	//if len(ports) == 0 {
+	//	return nil
+	//}
 
 	return &corev1.Service{
 		ObjectMeta: metav1.ObjectMeta{
