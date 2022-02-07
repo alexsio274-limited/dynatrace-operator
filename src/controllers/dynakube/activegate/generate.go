@@ -3,9 +3,9 @@ package activegate
 import "github.com/pkg/errors"
 
 const (
-	CommunicationEndpointsName = "communication_endpoints"
+	CommunicationEndpointsName = "communication-endpoints"
 	TenantTokenName            = "tenant-token"
-	TenantUuidName             = "uuid"
+	TenantUuidName             = "tenant-uuid"
 )
 
 func (r *Reconciler) GenerateData() (map[string][]byte, error) {

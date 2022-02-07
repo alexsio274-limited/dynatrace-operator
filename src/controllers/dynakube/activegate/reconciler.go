@@ -55,30 +55,30 @@ func (r *Reconciler) Reconcile() error {
 func (r *Reconciler) reconcileActiveGateSecret() error {
 	agSecretData, err := r.GenerateData()
 	if err != nil {
-		return fmt.Errorf("could not generate pull secret data: %w", err)
+		return fmt.Errorf("could not generate ag secret data: %w", err)
 	}
 
-	pullSecret, err := r.createAGSecretIfNotExists(agSecretData)
+	agSecret, err := r.createAGSecretIfNotExists(agSecretData)
 	if err != nil {
 		return fmt.Errorf("failed to create or update secret: %w", err)
 	}
 
-	return r.updateAGSecretIfOutdated(pullSecret, agSecretData)
+	return r.updateAGSecretIfOutdated(agSecret, agSecretData)
 }
 
 func (r *Reconciler) createAGSecretIfNotExists(agSecretData map[string][]byte) (*corev1.Secret, error) {
 	var config corev1.Secret
 	err := r.apiReader.Get(context.TODO(), client.ObjectKey{Name: extendWithAGSecretSuffix(r.instance.Name), Namespace: r.instance.Namespace}, &config)
 	if k8serrors.IsNotFound(err) {
-		log.Info("creating pull secret")
+		log.Info("creating ag secret")
 		return r.createAGSecret(agSecretData)
 	}
 	return &config, err
 }
 
-func (r *Reconciler) updateAGSecretIfOutdated(pullSecret *corev1.Secret, desiredPullSecretData map[string][]byte) error {
-	if !isPullSecretEqual(pullSecret, desiredPullSecretData) {
-		return r.updatePullSecret(pullSecret, desiredPullSecretData)
+func (r *Reconciler) updateAGSecretIfOutdated(agSecret *corev1.Secret, desiredAGSecretData map[string][]byte) error {
+	if !isSecretEqual(agSecret, desiredAGSecretData) {
+		return r.updateAGSecret(agSecret, desiredAGSecretData)
 	}
 	return nil
 }
@@ -97,16 +97,16 @@ func (r *Reconciler) createAGSecret(agSecretData map[string][]byte) (*corev1.Sec
 	return agSecret, nil
 }
 
-func (r *Reconciler) updatePullSecret(pullSecret *corev1.Secret, desiredPullSecretData map[string][]byte) error {
-	log.Info("updating secret", "name", pullSecret.Name)
-	pullSecret.Data = desiredPullSecretData
-	if err := r.Update(context.TODO(), pullSecret); err != nil {
-		return fmt.Errorf("failed to update secret %s: %w", pullSecret.Name, err)
+func (r *Reconciler) updateAGSecret(agSecret *corev1.Secret, desiredAGSecretData map[string][]byte) error {
+	log.Info("updating secret", "name", agSecret.Name)
+	agSecret.Data = desiredAGSecretData
+	if err := r.Update(context.TODO(), agSecret); err != nil {
+		return fmt.Errorf("failed to update secret %s: %w", agSecret.Name, err)
 	}
 	return nil
 }
 
-func isPullSecretEqual(currentSecret *corev1.Secret, desired map[string][]byte) bool {
+func isSecretEqual(currentSecret *corev1.Secret, desired map[string][]byte) bool {
 	return reflect.DeepEqual(desired, currentSecret.Data)
 }
 
