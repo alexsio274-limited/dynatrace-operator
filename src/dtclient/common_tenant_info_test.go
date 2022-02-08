@@ -8,7 +8,7 @@ import (
 func tenantMalformedJson(url string) http.HandlerFunc {
 	return func(writer http.ResponseWriter, request *http.Request) {
 		if request.URL.Path == url {
-			_, _ = writer.Write([]byte("this is not json"))
+			writer.Write([]byte("this is not json"))
 		} else {
 			writer.WriteHeader(http.StatusBadRequest)
 		}

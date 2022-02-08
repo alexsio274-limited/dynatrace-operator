@@ -7,7 +7,16 @@ import (
 	"github.com/pkg/errors"
 )
 
+type TenantInfo struct {
+	UUID                  string
+	Token                 string
+}
+
 type AgentTenantInfo struct {
+	TenantInfo
+	Endpoints             []string
+	CommunicationEndpoint string
+}
 	UUID                  string
 	Token                 string
 	Endpoints             []string
