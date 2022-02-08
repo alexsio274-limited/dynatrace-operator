@@ -163,8 +163,8 @@ func TestStatefulSet_Volumes(t *testing.T) {
 
 		require.Equal(t, 2, len(volumes))
 
-		customPropertiesVolume := volumes[1]
-		assert.Equal(t, customproperties.VolumeName, customPropertiesVolume.Name)
+		customPropertiesVolume, err := kubeobjects.GetVolumeByName(volumes, customproperties.VolumeName)
+		assert.NoError(t, err)
 		assert.NotNil(t, customPropertiesVolume.VolumeSource)
 		assert.NotNil(t, customPropertiesVolume.VolumeSource.Secret)
 		assert.Equal(t, expectedSecretName, customPropertiesVolume.Secret.SecretName)
@@ -185,8 +185,8 @@ func TestStatefulSet_Volumes(t *testing.T) {
 
 		require.Equal(t, 2, len(volumes))
 
-		customPropertiesVolume := volumes[1]
-		assert.Equal(t, customproperties.VolumeName, customPropertiesVolume.Name)
+		customPropertiesVolume, err := kubeobjects.GetVolumeByName(volumes, customproperties.VolumeName)
+		assert.NoError(t, err)
 		assert.NotNil(t, customPropertiesVolume.VolumeSource)
 		assert.NotNil(t, customPropertiesVolume.VolumeSource.Secret)
 		assert.Equal(t, expectedSecretName, customPropertiesVolume.Secret.SecretName)
@@ -206,8 +206,8 @@ func TestStatefulSet_Env(t *testing.T) {
 			testUID, "", testFeature, "MSGrouter", "",
 			nil, nil, nil,
 		))
-		assert.Equal(t, 7, len(envVars))
-		assert.Equal(t, envVars, []corev1.EnvVar{
+
+		expectedEnvVars := []corev1.EnvVar{
 			{
 				Name: dtServer,
 				ValueFrom: &corev1.EnvVarSource{
@@ -235,7 +235,10 @@ func TestStatefulSet_Env(t *testing.T) {
 			{Name: dtIdSeedClusterId, Value: testUID},
 			{Name: dtDeploymentMetadata, Value: deploymentMetadata.AsString()},
 			{Name: testKey, Value: testValue},
-		})
+		}
+
+		assert.ElementsMatch(t, expectedEnvVars, envVars)
+
 	})
 	t.Run(`with networkzone`, func(t *testing.T) {
 		instance := buildTestInstance()

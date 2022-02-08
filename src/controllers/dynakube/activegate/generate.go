@@ -8,7 +8,7 @@ const (
 	TenantUuidName             = "tenant-uuid"
 )
 
-func (r *Reconciler) GenerateData() (map[string][]byte, error) {
+func (r *Reconciler) getActiveGateTenantInfo() (map[string][]byte, error) {
 	tenantInfo, err := r.dtc.GetActiveGateTenantInfo()
 
 	if err != nil {

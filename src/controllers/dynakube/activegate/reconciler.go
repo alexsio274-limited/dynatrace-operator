@@ -3,10 +3,10 @@ package activegate
 import (
 	"context"
 	"fmt"
-	"reflect"
 
 	dynatracev1beta1 "github.com/Dynatrace/dynatrace-operator/src/api/v1beta1"
 	"github.com/Dynatrace/dynatrace-operator/src/dtclient"
+	"github.com/Dynatrace/dynatrace-operator/src/kubeobjects"
 	"github.com/pkg/errors"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -53,7 +53,7 @@ func (r *Reconciler) Reconcile() error {
 }
 
 func (r *Reconciler) reconcileActiveGateSecret() error {
-	agSecretData, err := r.GenerateData()
+	agSecretData, err := r.getActiveGateTenantInfo()
 	if err != nil {
 		return fmt.Errorf("could not generate ag secret data: %w", err)
 	}
@@ -77,7 +77,7 @@ func (r *Reconciler) createAGSecretIfNotExists(agSecretData map[string][]byte) (
 }
 
 func (r *Reconciler) updateAGSecretIfOutdated(agSecret *corev1.Secret, desiredAGSecretData map[string][]byte) error {
-	if !isSecretEqual(agSecret, desiredAGSecretData) {
+	if !kubeobjects.IsSecretEqual(agSecret, desiredAGSecretData) {
 		return r.updateAGSecret(agSecret, desiredAGSecretData)
 	}
 	return nil
@@ -104,10 +104,6 @@ func (r *Reconciler) updateAGSecret(agSecret *corev1.Secret, desiredAGSecretData
 		return fmt.Errorf("failed to update secret %s: %w", agSecret.Name, err)
 	}
 	return nil
-}
-
-func isSecretEqual(currentSecret *corev1.Secret, desired map[string][]byte) bool {
-	return reflect.DeepEqual(desired, currentSecret.Data)
 }
 
 func BuildAGSecret(instance *dynatracev1beta1.DynaKube, agSecretData map[string][]byte) *corev1.Secret {

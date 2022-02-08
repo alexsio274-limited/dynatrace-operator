@@ -8,7 +8,10 @@ import (
 
 const activeGateConnectionInfoEndpoint = "/v1/deployment/installer/gateway/connectioninfo"
 
-var agTenantResponse = &ActiveGateTenantInfo{"abcd", "1234", "/some/url"}
+var agTenantResponse = &ActiveGateTenantInfo{
+	TenantInfo{"abcd", "1234"},
+	"/some/url",
+}
 
 func TestGetActiveGateTenantInfoFaulty1(t *testing.T) {
 	t.Run("GetActiveGateTenantInfo with no networkzone", func(t *testing.T) {

@@ -7,18 +7,8 @@ import (
 	"github.com/pkg/errors"
 )
 
-type TenantInfo struct {
-	UUID                  string
-	Token                 string
-}
-
 type AgentTenantInfo struct {
 	TenantInfo
-	Endpoints             []string
-	CommunicationEndpoint string
-}
-	UUID                  string
-	Token                 string
 	Endpoints             []string
 	CommunicationEndpoint string
 }
@@ -72,8 +62,10 @@ func (dtc *dynatraceClient) readResponseForTenantInfo(response []byte) (*AgentTe
 	}
 
 	return &AgentTenantInfo{
-		UUID:      jr.TenantUUID,
-		Token:     jr.TenantToken,
+		TenantInfo: TenantInfo{
+			UUID:  jr.TenantUUID,
+			Token: jr.TenantToken,
+		},
 		Endpoints: jr.CommunicationEndpoints,
 	}, nil
 }

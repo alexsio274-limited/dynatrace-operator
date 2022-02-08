@@ -7,8 +7,7 @@ import (
 )
 
 type ActiveGateTenantInfo struct {
-	UUID      string `json:"tenantUUID"`
-	Token     string `json:"tenantToken"`
+	TenantInfo
 	Endpoints string `json:"communicationEndpoints"`
 }
 
