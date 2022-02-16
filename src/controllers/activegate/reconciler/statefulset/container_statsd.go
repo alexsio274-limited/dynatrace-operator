@@ -16,6 +16,11 @@ const statsdLogsDir = extensionsLogsDir + "/datasources-statsd"
 const (
 	dataSourceMetadata   = "ds-metadata"
 	dataSourceStatsdLogs = "statsd-logs"
+
+	envStatsdMetadata            = "StatsdMetadataDir"
+	envDataSourceProbeServerPort = "ProbeServerPort"
+	envDataSourceLogFile         = "DsLogFile"
+	envStatsdStartupArgsPath     = "StatsdExecArgsPath"
 )
 
 var _ kubeobjects.ContainerBuilder = (*Statsd)(nil)
